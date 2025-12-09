@@ -21,6 +21,6 @@ jobs:
       run: |
         git config --global user.name "github-actions"
         git config --global user.email "nmrsu-rice@github.com"
-        git add live.html
+        git add Automation500.html
         git diff --cached --quiet || git commit -m "Auto update HTML from Google Drive"
         git push
