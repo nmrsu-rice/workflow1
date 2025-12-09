@@ -1,0 +1,38 @@
+name: Fetch HTML from Google Drive
+permissions:
+  contents: write
+on:
+  schedule:
+    - cron: '*/5 * * * *'   # Runs every 5 minutes
+  workflow_dispatch:
+
+jobs:
+  fetch-file:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Step 2: Download HTML file from Google Drive
+      - name: Download HTML from Google Drive
+        run: |
+          FILE_URL="https://drive.google.com/uc?export=download&id=1uTOl4e3FQ6vQBveY-QiFpV1xbZKXEhG8"
+          curl -L -o Automation500.html "$FILE_URL" || echo "Download failed, skipping commit"
+
+      # Step 3: Commit and push changes if the file changed
+      - name: Commit and push if changed
+        run: |
+          git config --global user.name "nmrsusea"
+          git config --global user.email "nmrsusea@gmail.com"
+          # Only commit if file exists
+          if [ -f Automation500.html ]; then
+            git add Automation500.html
+            git diff --cached --quiet || git commit -m "Auto update HTML from Google Drive"
+            git push
+          else
+            echo "No file to commit, skipping"
+          fi
